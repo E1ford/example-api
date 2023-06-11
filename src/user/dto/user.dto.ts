@@ -6,9 +6,10 @@ import {
   IsDate,
   IsStrongPassword,
 } from 'class-validator';
-import { UserGender } from 'src/user/user.entity';
 
-export class RegistrationDto {
+import { UserGender } from '../user.entity';
+
+export class CreateUserDto {
   @IsString()
   firstName: string;
 

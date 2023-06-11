@@ -1,12 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-
-import * as subscribers from './entities';
-
-const autoloadSubscribers = Object.keys(subscribers).map(
-  (subscriber) => subscribers[subscriber],
-);
+import { UserSubscriber } from 'src/user/user.subscriber';
 
 @Module({
   imports: [
@@ -24,7 +19,7 @@ const autoloadSubscribers = Object.keys(subscribers).map(
         migrationsTableName: 'migrations',
         // migrations: ['src/migration/*.ts'],
         synchronize: true, //убрать перед продакшеном
-        subscribers: autoloadSubscribers,
+        subscribers: [UserSubscriber],
       }),
       inject: [ConfigService],
     }),

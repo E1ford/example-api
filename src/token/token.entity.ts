@@ -1,4 +1,4 @@
-import { Users } from './';
+import { User } from 'src/user/user.entity';
 
 import {
   Entity,
@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 
 @Entity()
-export class Tokens {
+export class Token {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -19,6 +19,6 @@ export class Tokens {
   @CreateDateColumn()
   date: string;
 
-  @ManyToOne(() => Users, (user) => user.id)
+  @ManyToOne(() => User, (user) => user.id)
   user: number;
 }

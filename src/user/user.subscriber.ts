@@ -5,15 +5,15 @@ import {
 } from 'typeorm';
 import { hashSync } from 'bcryptjs';
 
-import { Users } from '../entities';
+import { User } from './user.entity';
 
 @EventSubscriber()
-export class UserSubscriber implements EntitySubscriberInterface<Users> {
+export class UserSubscriber implements EntitySubscriberInterface<User> {
   listenTo() {
-    return Users;
+    return User;
   }
 
-  beforeInsert(event: InsertEvent<Users>) {
+  beforeInsert(event: InsertEvent<User>) {
     const hashPassword = hashSync(event.entity.password);
     event.entity.password = hashPassword;
   }
