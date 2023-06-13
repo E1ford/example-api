@@ -1,61 +1,58 @@
 import {
-  Body,
   Controller,
   Get,
-  Post,
-  UsePipes,
-  ValidationPipe,
-  Res,
-  Req,
-  Headers,
+  Param,
+  Query,
+  ParseIntPipe,
+  Patch,
+  Body,
+  ParseEnumPipe,
+  UseGuards,
+  SetMetadata,
 } from '@nestjs/common';
-import { Response, Request } from 'express';
 
 import { UserService } from './user.service';
+import { UserRole } from './user.entity';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { Roles } from 'src/auth/decorators/roles.decorator';
 
+@UseGuards(RolesGuard)
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  // @UsePipes(ValidationPipe)
-  // @Post('registration')
-  // async registration(
-  //   @Body() dto: RegistrationDto,
-  //   @Res({ passthrough: true }) response: Response,
-  // ) {
-  //   return this.authService.registration(dto, response);
-  // }
+  @Roles(UserRole.EDITOR)
+  @Get('/1')
+  async sad() {
+    return 'for editor';
+  }
 
-  // @UsePipes(ValidationPipe)
-  // @Post('login')
-  // async login(
-  //   @Body() dto: LoginDto,
-  //   @Res({ passthrough: true }) response: Response,
-  // ) {
-  //   return this.authService.login(dto, response);
-  // }
+  @Roles(UserRole.ADMIN)
+  @Get('/2')
+  async dasd() {
+    return 'for admin';
+  }
 
-  // @Get('who-am-i')
-  // async whoAmI(
-  //   @Req() request: Request,
-  //   @Headers('authorization') authorizationHeaders: string,
-  // ) {
-  //   return this.authService.whoAmI(authorizationHeaders);
-  // }
+  @Get('/')
+  async getAll(
+    // TODO значение по умолчанию
+    @Query('page', ParseIntPipe) page: number | undefined,
+    @Query('limit', ParseIntPipe) limit: number | undefined,
+  ) {
+    return await this.userService.getAll(page, limit);
+  }
 
-  // @Get('refresh')
-  // async refresh(
-  //   @Res({ passthrough: true }) response: Response,
-  //   @Headers('authorization') authorizationHeaders: string,
-  // ) {
-  //   return this.authService.refresh(response, authorizationHeaders);
-  // }
+  @Get('/:userId')
+  async findById(@Param('userId', ParseIntPipe) userId: number) {
+    return await this.userService.findById(userId);
+  }
 
-  // @Get('logout')
-  // async logout(
-  //   @Res({ passthrough: true }) response: Response,
-  //   @Headers('authorization') authorizationHeaders: string,
-  // ) {
-  //   return this.authService.logout(authorizationHeaders, response);
-  // }
+  // защитить его
+  @Patch('/')
+  async changeRole(
+    @Body('id', ParseIntPipe) userId: number,
+    @Body('role', new ParseEnumPipe(UserRole)) role: UserRole,
+  ) {
+    return await this.userService.changeRole(userId, role);
+  }
 }

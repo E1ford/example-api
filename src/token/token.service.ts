@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  UnauthorizedException,
-  BadRequestException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { Repository } from 'typeorm';
@@ -28,13 +24,17 @@ export class TokenService {
       role: user.role,
     };
     const access_token = `Bearer ${await this.jwtService.signAsync(payload, {
-      expiresIn: '10h',
+      expiresIn: '10d',
     })}`;
     const refresh_token = `Bearer ${await this.jwtService.signAsync(payload, {
       expiresIn: '30d',
     })}`;
+
+    await this.saveToken({ token: refresh_token, user: user.id });
+
     return { access_token, refresh_token };
   }
+
   async saveToken({ token, user }: CreateToken) {
     this.tokenRepository.save({ token, user });
   }

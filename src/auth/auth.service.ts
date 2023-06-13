@@ -25,10 +25,6 @@ export class AuthService {
     const newUser = await this.userService.createUser(dto);
     const { access_token, refresh_token } =
       await this.tokenService.generateTokens(newUser);
-    await this.tokenService.saveToken({
-      token: refresh_token,
-      user: newUser.id,
-    });
 
     response.cookie('refresh_token', refresh_token, {
       httpOnly: true,
@@ -46,10 +42,6 @@ export class AuthService {
     );
     const { access_token, refresh_token } =
       await this.tokenService.generateTokens(validateUser);
-    await this.tokenService.saveToken({
-      token: refresh_token,
-      user: validateUser.id,
-    });
 
     response.cookie('refresh_token', refresh_token, {
       httpOnly: true,
@@ -68,7 +60,7 @@ export class AuthService {
 
   async whoAmI(authorizationHeaders: string) {
     if (!authorizationHeaders)
-      throw new UnauthorizedException('you not autorized!');
+      throw new UnauthorizedException('you are not authorized!');
 
     const payload = this.tokenService.decode(authorizationHeaders);
     const { password, ...userOmitPassword } =
@@ -78,7 +70,7 @@ export class AuthService {
 
   async refresh(response: Response, authorizationHeaders: string) {
     if (!authorizationHeaders)
-      throw new UnauthorizedException('you not autorized!');
+      throw new UnauthorizedException('you are not authorized!');
 
     const payload = this.tokenService.decode(authorizationHeaders);
     const user = await this.userService.findUserByEmail(payload['email']);

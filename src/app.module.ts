@@ -6,7 +6,6 @@ import { DataBaseModule } from './dataBase/dataBase.module';
 import { AdminModule } from './admin/admin.module';
 import { UserModule } from './user/user.module';
 import { TokenModule } from './token/token.module';
-import { UserService } from './user/user.service';
 
 @Module({
   imports: [
