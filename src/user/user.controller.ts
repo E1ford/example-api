@@ -8,36 +8,25 @@ import {
   Body,
   ParseEnumPipe,
   UseGuards,
-  SetMetadata,
+  DefaultValuePipe,
 } from '@nestjs/common';
 
 import { UserService } from './user.service';
 import { UserRole } from './user.entity';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
-import { Roles } from 'src/auth/decorators/roles.decorator';
+import { Roles } from 'src/decorators/roles.decorator';
 
 @UseGuards(RolesGuard)
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Roles(UserRole.EDITOR)
-  @Get('/1')
-  async sad() {
-    return 'for editor';
-  }
-
-  @Roles(UserRole.ADMIN)
-  @Get('/2')
-  async dasd() {
-    return 'for admin';
-  }
-
   @Get('/')
   async getAll(
-    // TODO значение по умолчанию
-    @Query('page', ParseIntPipe) page: number | undefined,
-    @Query('limit', ParseIntPipe) limit: number | undefined,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe)
+    page: number,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe)
+    limit: number,
   ) {
     return await this.userService.getAll(page, limit);
   }
@@ -47,7 +36,7 @@ export class UserController {
     return await this.userService.findById(userId);
   }
 
-  // защитить его
+  @Roles(UserRole.ADMIN)
   @Patch('/')
   async changeRole(
     @Body('id', ParseIntPipe) userId: number,

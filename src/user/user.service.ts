@@ -57,7 +57,7 @@ export class UserService {
       users,
       limit,
       currentPage: page,
-      totalPage: totalCountUser / limit,
+      totalPage: Math.ceil(totalCountUser / limit),
       totalCountUser,
     };
   }
