@@ -7,6 +7,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { compare } from 'bcryptjs';
+import { pick } from 'lodash';
 
 import { CreateUserDto } from './dto/user.dto';
 import { User, UserRole } from './user.entity';
@@ -26,7 +27,17 @@ export class UserService {
     const candidate = await this.findUserByEmail(user.email);
     if (candidate) throw new BadRequestException('user already exists!');
 
-    return await this.userRepository.save(user);
+    const pickUserData = pick(user, [
+      'firstName',
+      'password',
+      'lastName',
+      'patronymic',
+      'gender',
+      'email',
+      'avatar',
+      'birthday',
+    ]);
+    return await this.userRepository.save(pickUserData);
   }
 
   async validateUser(email: string, password: string): Promise<User> {

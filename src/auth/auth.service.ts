@@ -17,6 +17,7 @@ export class AuthService {
     private readonly userService: UserService,
     private readonly tokenService: TokenService,
   ) {}
+  private readonly cookieMaxAge: number = 30 * 24 * 60 * 60 * 1000;
 
   async registration(dto: RegistrationDto, response: Response) {
     const oldUser = await this.userService.findUserByEmail(dto.email);
@@ -28,7 +29,7 @@ export class AuthService {
 
     response.cookie('refresh_token', refresh_token, {
       httpOnly: true,
-      maxAge: 30 * 24 * 60 * 60 * 1000,
+      maxAge: this.cookieMaxAge,
     });
 
     const userOmitPassword = omit(newUser, 'password');
@@ -45,7 +46,7 @@ export class AuthService {
 
     response.cookie('refresh_token', refresh_token, {
       httpOnly: true,
-      maxAge: 30 * 24 * 60 * 60 * 1000,
+      maxAge: this.cookieMaxAge,
     });
 
     const userOmitPassword = omit(validateUser, 'password');

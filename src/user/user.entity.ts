@@ -47,7 +47,7 @@ export class User {
   @CreateDateColumn({ nullable: true, default: null })
   birthday: Date;
 
-  @CreateDateColumn({ type: 'enum', enum: UserRole, default: UserRole.GHOST })
+  @Column({ type: 'enum', enum: UserRole, default: UserRole.GHOST })
   role: UserRole;
 
   @CreateDateColumn()
